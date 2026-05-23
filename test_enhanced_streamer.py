@@ -55,29 +55,29 @@ try:
     # Verify data quality
     print("[VERIFICATION]")
     if completed / total_orders > 0.80:
-        print("  ✓ Completion rate is realistic (>80%)")
+        print("  [OK] Completion rate is realistic (>80%)")
     else:
-        print(f"  ✗ Completion rate low ({100*completed/total_orders:.1f}%)")
+        print(f"  [FAIL] Completion rate low ({100*completed/total_orders:.1f}%)")
 
     if pending > 0:
-        print(f"  ✓ Pending orders exist ({pending:,}) - demonstrating status diversity")
+        print(f"  [OK] Pending orders exist ({pending:,}) - demonstrating status diversity")
     else:
-        print(f"  ✗ No pending orders")
+        print(f"  [FAIL] No pending orders")
 
     if cancelled < 0.05 * total_orders:
-        print(f"  ✓ Low cancellation rate (<5%) - realistic business pattern")
+        print(f"  [OK] Low cancellation rate (<5%) - realistic business pattern")
     else:
-        print(f"  ✗ High cancellation rate (>5%)")
+        print(f"  [FAIL] High cancellation rate (>5%)")
 
     if total_events > 0:
-        print(f"  ✓ Web events being generated ({total_events:,})")
+        print(f"  [OK] Web events being generated ({total_events:,})")
     else:
-        print(f"  ✗ No web events")
+        print(f"  [FAIL] No web events")
 
     if total_items == total_orders or total_items > total_orders:
-        print(f"  ✓ Order items generated (avg {total_items/max(1, total_orders):.2f} per order)")
+        print(f"  [OK] Order items generated (avg {total_items/max(1, total_orders):.2f} per order)")
     else:
-        print(f"  ✗ Order items mismatch")
+        print(f"  [FAIL] Order items mismatch")
 
     print()
     print("=" * 80)

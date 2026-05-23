@@ -150,11 +150,11 @@ finally:
         print(f"  Avg Order Value:     ${aov:,.2f}")
 
         if orders_final > 0 and events_final > 0:
-            print(f"\n✓ SUCCESS: Data is being generated and stored correctly!")
-            print(f"✓ Orders increased: {orders_final > baseline_metrics.get('orders', 0)}")
-            print(f"✓ Events increased: {events_final > baseline_metrics.get('events', 0)}")
+            print(f"\n[OK] SUCCESS: Data is being generated and stored correctly!")
+            print(f"[OK] Orders increased: {orders_final > baseline_metrics.get('orders', 0)}")
+            print(f"[OK] Events increased: {events_final > baseline_metrics.get('events', 0)}")
         else:
-            print(f"\n✗ FAILURE: No data in database!")
+            print(f"\n[FAIL] FAILURE: No data in database!")
 
     except Exception as e:
         print(f"ERROR in final check: {e}")
