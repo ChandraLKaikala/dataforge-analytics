@@ -1,0 +1,148 @@
+version: 2
+
+sources:
+  - name: raw_ecommerce
+    description: Raw e-commerce operational data
+    schema: raw
+
+    freshness:
+      warn_after: { count: 12, period: hour }
+      error_after: { count: 24, period: hour }
+    loaded_at_field: created_at
+
+    tables:
+      - name: customers
+        description: Customer master data with demographics and tier classification
+        columns:
+          - name: customer_id
+            description: Unique customer identifier (PK)
+            data_tests:
+              - unique
+              - not_null
+          - name: email
+            description: Customer email address
+            tags: [pii]
+          - name: first_name
+            description: Customer first name
+          - name: last_name
+            description: Customer last name
+          - name: country
+            description: ISO 2-letter country code
+          - name: tier
+            description: Customer tier (Bronze, Silver, Gold, Platinum)
+          - name: created_at
+            description: Account creation timestamp
+            data_tests:
+              - not_null
+
+      - name: orders
+        description: Orders placed by customers
+        columns:
+          - name: order_id
+            description: Unique order identifier (PK)
+            data_tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: Customer FK to customers table
+            data_tests:
+              - not_null
+              - relationships:
+                  to: source('raw_ecommerce', 'customers')
+                  field: customer_id
+          - name: order_date
+            description: Date and time order was placed
+            data_tests:
+              - not_null
+          - name: total_amount
+            description: Total order amount in USD
+          - name: status
+            description: Order status (Completed, Pending, Cancelled, Refunded)
+          - name: payment_method
+            description: Payment method used
+
+      - name: order_items
+        description: Individual line items within orders
+        columns:
+          - name: order_item_id
+            description: Unique order item identifier (PK)
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: FK to orders
+            data_tests:
+              - not_null
+          - name: product_id
+            description: FK to products
+            data_tests:
+              - not_null
+          - name: quantity
+            description: Quantity ordered
+            data_tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_in_set:
+                  value_set: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          - name: unit_price
+            description: Price per unit at time of sale
+          - name: discount_amount
+            description: Discount applied to line item
+
+      - name: products
+        description: Product master data
+        columns:
+          - name: product_id
+            description: Unique product identifier (PK)
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Product name
+          - name: category
+            description: Product category
+          - name: price
+            description: Current product price
+          - name: cost
+            description: Product cost
+          - name: active
+            description: Whether product is active for sale
+
+      - name: campaigns
+        description: Marketing campaigns
+        columns:
+          - name: campaign_id
+            description: Unique campaign identifier (PK)
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Campaign name
+          - name: channel
+            description: Marketing channel (Email, Social, Display, Search, Organic)
+          - name: budget
+            description: Campaign budget in USD
+          - name: start_date
+            description: Campaign start date
+          - name: end_date
+            description: Campaign end date
+
+      - name: web_events
+        description: Web clickstream events
+        columns:
+          - name: event_id
+            description: Unique event identifier (PK)
+            data_tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: Customer FK
+          - name: event_type
+            description: Type of event (page_view, add_to_cart, purchase, checkout, wishlist)
+          - name: product_id
+            description: Product involved in event (nullable)
+          - name: campaign_id
+            description: Campaign FK (nullable)
+          - name: event_date
+            description: Event timestamp
+          - name: session_duration_seconds
+            description: Duration of session in seconds

@@ -1,0 +1,45 @@
+version: 2
+
+semantic_models:
+  - name: customers
+    description: Customer dimension with calculated metrics
+    defaults:
+      agg_time_dimension: created_at
+
+    entities:
+      - name: customer_id
+        type: primary
+
+    dimensions:
+      - name: country_code
+        type: categorical
+
+      - name: tier
+        type: categorical
+
+      - name: created_at
+        type: time
+        time_granularity: day
+        expr: created_at
+
+    measures:
+      - name: customer_count
+        description: Count of unique customers
+        agg: count_distinct
+        expr: customer_id
+
+      - name: avg_lifetime_value
+        description: Average LTV per customer
+        agg: average
+        expr: lifetime_value
+
+    metrics:
+      - name: new_customers
+        description: New customers acquired
+        type: simple
+        expr: customer_count
+
+      - name: avg_ltv
+        description: Average customer lifetime value
+        type: simple
+        expr: avg_lifetime_value

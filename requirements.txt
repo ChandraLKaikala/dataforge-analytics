@@ -1,0 +1,6 @@
+dbt-core==1.8.4
+dbt-duckdb==1.8.4
+duckdb>=1.0.0
+faker>=25.0.0
+pandas>=2.0.0
+streamlit>=1.40.0

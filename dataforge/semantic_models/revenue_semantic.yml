@@ -1,0 +1,66 @@
+version: 2
+
+semantic_models:
+  - name: revenue
+    description: Revenue metrics from completed orders
+    defaults:
+      agg_time_dimension: order_date
+
+    entities:
+      - name: order_id
+        type: primary
+        role: order
+
+      - name: customer_id
+        type: foreign
+        role: customer
+
+      - name: product_id
+        type: foreign
+        role: product
+
+    dimensions:
+      - name: order_date
+        type: time
+        time_granularity: day
+        expr: order_date
+
+      - name: status
+        type: categorical
+        expr: status
+
+      - name: payment_method
+        type: categorical
+        expr: payment_method
+
+    measures:
+      - name: total_revenue
+        description: Sum of all order amounts
+        agg: sum
+        expr: total_amount
+
+      - name: order_count
+        description: Count of distinct orders
+        agg: count_distinct
+        expr: order_id
+
+      - name: avg_order_value
+        description: Average revenue per order
+        agg: average
+        expr: total_amount
+
+    metrics:
+      - name: revenue
+        description: Total revenue from completed orders
+        type: simple
+        expr: total_revenue
+
+      - name: gross_margin
+        description: Gross profit margin percentage
+        type: derived
+        expr: "{{ Metric('profit') / Metric('revenue') }}"
+
+      - name: refund_rate
+        description: Percentage of refunded orders
+        type: derived
+        expr: "{{ Metric('refund_count') / Metric('order_count') }}"

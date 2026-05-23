@@ -1,0 +1,23 @@
+[project]
+name = "dataforge"
+version = "1.0.0"
+description = "Advanced dbt + DuckDB data analytics platform with Snowflake/Databricks support"
+authors = [{name = "DataForge", email = "lokeshchandra.kaikala@gmail.com"}]
+requires-python = ">=3.9"
+dependencies = [
+    "dbt-core>=1.8.5",
+    "dbt-duckdb>=1.8.5",
+    "dbt-snowflake>=1.8.5",
+    "dbt-databricks>=1.8.5",
+    "duckdb>=1.0.0",
+    "faker>=25.0.0",
+    "numpy>=1.24.3",
+    "pandas>=2.2.0",
+    "streamlit>=1.40.1",
+    "sqlfluff>=3.1.1",
+    "pre-commit>=3.7.0",
+]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"

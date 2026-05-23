@@ -1,0 +1,73 @@
+name: 'dataforge'
+version: '1.0.0'
+config-version: 2
+
+profile: 'dataforge'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "logs"
+
+seeds:
+  dataforge:
+    +quote_columns: false
+    +tags: ["static_reference"]
+
+models:
+  dataforge:
+    materialized: view
+    tags: ["daily"]
+
+    staging:
+      +materialized: view
+      +contract:
+        enforced: false
+      +tags: ["staging", "daily"]
+
+    intermediate:
+      +materialized: table
+      +tags: ["intermediate", "daily"]
+
+    marts:
+      core:
+        +materialized: table
+        +contract:
+          enforced: false
+        +tags: ["core_mart", "daily", "critical"]
+
+      marketing:
+        +materialized: table
+        +contract:
+          enforced: false
+        +tags: ["marketing_mart", "daily"]
+
+      finance:
+        +materialized: table
+        +contract:
+          enforced: false
+        +tags: ["finance_mart", "weekly"]
+
+snapshots:
+  dataforge:
+    +tags: ["snapshot"]
+
+vars:
+  pivot_date: '2023-01-01'
+  client_name: 'DataForge Analytics'
+  incremental_lookback: 3
+
+require-dbt-version: [">=1.8.0", "<2.0.0"]
+
+on-run-start:
+  - "{{ log('Starting dbt run for project DataForge', info=True) }}"
+
+on-run-end:
+  - "{{ log('Finished dbt run successfully', info=True) }}"

@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: int_customer_orders
+    description: Customer with aggregated order metrics (customer-order fact table)
+    columns:
+      - name: customer_id
+        data_type: integer
+      - name: order_id
+        data_type: integer
+      - name: order_count_to_date
+        data_type: integer
+      - name: cumulative_revenue_to_date
+        data_type: decimal
+      - name: first_order_date
+        data_type: timestamp
+      - name: days_since_last_order
+        data_type: integer
+
+  - name: int_product_performance
+    description: Product performance metrics across all orders
+    columns:
+      - name: product_id
+        data_type: integer
+      - name: total_units_sold
+        data_type: integer
+      - name: total_revenue
+        data_type: decimal
+      - name: gross_profit
+        data_type: decimal
+      - name: avg_unit_price
+        data_type: decimal
+      - name: order_count
+        data_type: integer
+
+  - name: int_campaign_attribution
+    description: Campaign attribution with first-touch, last-touch, and linear models
+    columns:
+      - name: campaign_id
+        data_type: integer
+      - name: customer_id
+        data_type: integer
+      - name: order_id
+        data_type: integer
+      - name: first_touch_revenue
+        data_type: decimal
+      - name: last_touch_revenue
+        data_type: decimal
+      - name: linear_touch_revenue
+        data_type: decimal
+      - name: days_to_conversion
+        data_type: integer
+
+  - name: int_session_analytics
+    description: Customer sessions created from web events with sessionization logic
+    columns:
+      - name: session_id
+        data_type: varchar
+      - name: customer_id
+        data_type: integer
+      - name: session_start
+        data_type: timestamp
+      - name: session_end
+        data_type: timestamp
+      - name: event_count
+        data_type: integer
+      - name: total_session_duration_seconds
+        data_type: integer
+      - name: session_events
+        data_type: varchar

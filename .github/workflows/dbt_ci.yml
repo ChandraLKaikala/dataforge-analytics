@@ -1,0 +1,84 @@
+name: dbt CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  dbt-test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run dbt deps
+        working-directory: dataforge
+        run: dbt deps
+
+      - name: Lint SQL with sqlfluff
+        working-directory: dataforge
+        run: sqlfluff lint models/ --dialect duckdb
+        continue-on-error: true
+
+      - name: Generate synthetic data
+        run: python scripts/generate_data.py
+
+      - name: Load dbt seeds
+        working-directory: dataforge
+        run: dbt seed
+
+      - name: Validate dbt project
+        working-directory: dataforge
+        run: dbt parse
+
+      - name: Run staging models
+        working-directory: dataforge
+        run: dbt run --select staging
+
+      - name: Test staging models
+        working-directory: dataforge
+        run: dbt test --select staging
+
+      - name: Run all models
+        working-directory: dataforge
+        run: dbt run
+
+      - name: Run all tests
+        working-directory: dataforge
+        run: dbt test
+
+      - name: Generate dbt docs
+        working-directory: dataforge
+        run: dbt docs generate
+
+      - name: Upload dbt artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dbt-artifacts
+          path: dataforge/target/
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ dbt pipeline completed successfully!\n\n- [View dbt docs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})'
+            })

@@ -1,0 +1,129 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Cleaned and deduplicated customer data with PII masking
+    columns:
+      - name: customer_id
+        data_type: integer
+        description: Unique customer identifier
+      - name: email_hash
+        data_type: varchar
+        description: Hashed email for privacy
+      - name: first_name
+        data_type: varchar
+      - name: last_name
+        data_type: varchar
+      - name: country_code
+        data_type: varchar
+      - name: tier
+        data_type: varchar
+      - name: created_at
+        data_type: timestamp
+      - name: _loaded_at
+        data_type: timestamp
+    contract:
+      enforced: true
+
+  - name: stg_orders
+    description: Cleaned orders with all required fields typed
+    columns:
+      - name: order_id
+        data_type: integer
+        description: Unique order identifier
+      - name: customer_id
+        data_type: integer
+      - name: order_date
+        data_type: timestamp
+      - name: total_amount
+        data_type: decimal
+      - name: status
+        data_type: varchar
+      - name: payment_method
+        data_type: varchar
+      - name: _loaded_at
+        data_type: timestamp
+    contract:
+      enforced: true
+
+  - name: stg_order_items
+    description: Cleaned order line items
+    columns:
+      - name: order_item_id
+        data_type: integer
+      - name: order_id
+        data_type: integer
+      - name: product_id
+        data_type: integer
+      - name: quantity
+        data_type: integer
+      - name: unit_price
+        data_type: decimal
+      - name: discount_amount
+        data_type: decimal
+      - name: _loaded_at
+        data_type: timestamp
+    contract:
+      enforced: true
+
+  - name: stg_products
+    description: Cleaned product master data
+    columns:
+      - name: product_id
+        data_type: integer
+      - name: name
+        data_type: varchar
+      - name: category
+        data_type: varchar
+      - name: price
+        data_type: decimal
+      - name: cost
+        data_type: decimal
+      - name: active
+        data_type: boolean
+      - name: _loaded_at
+        data_type: timestamp
+    contract:
+      enforced: true
+
+  - name: stg_campaigns
+    description: Cleaned marketing campaigns
+    columns:
+      - name: campaign_id
+        data_type: integer
+      - name: name
+        data_type: varchar
+      - name: channel
+        data_type: varchar
+      - name: budget
+        data_type: decimal
+      - name: start_date
+        data_type: date
+      - name: end_date
+        data_type: date
+      - name: _loaded_at
+        data_type: timestamp
+    contract:
+      enforced: true
+
+  - name: stg_web_events
+    description: Cleaned web events with explicit typing
+    columns:
+      - name: event_id
+        data_type: integer
+      - name: customer_id
+        data_type: integer
+      - name: event_type
+        data_type: varchar
+      - name: product_id
+        data_type: integer
+      - name: campaign_id
+        data_type: integer
+      - name: event_date
+        data_type: timestamp
+      - name: session_duration_seconds
+        data_type: integer
+      - name: _loaded_at
+        data_type: timestamp
+    contract:
+      enforced: true

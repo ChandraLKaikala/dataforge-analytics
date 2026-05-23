@@ -1,0 +1,42 @@
+version: 2
+
+semantic_models:
+  - name: campaigns
+    description: Marketing campaign performance metrics
+    defaults:
+      agg_time_dimension: start_date
+
+    entities:
+      - name: campaign_id
+        type: primary
+
+    dimensions:
+      - name: channel
+        type: categorical
+
+      - name: start_date
+        type: time
+        time_granularity: day
+        expr: start_date
+
+    measures:
+      - name: campaign_count
+        description: Count of campaigns
+        agg: count_distinct
+        expr: campaign_id
+
+      - name: total_budget
+        description: Total campaign budget allocated
+        agg: sum
+        expr: budget
+
+    metrics:
+      - name: avg_campaign_budget
+        description: Average budget per campaign
+        type: simple
+        expr: total_budget / campaign_count
+
+      - name: roi
+        description: Return on investment (attributed revenue / budget)
+        type: derived
+        expr: "{{ Metric('attributed_revenue') / Metric('total_budget') }}"

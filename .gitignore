@@ -1,0 +1,43 @@
+# Database files (too large for GitHub - will be generated locally)
+*.duckdb
+*.db
+*.sqlite
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project artifacts
+logs/
+target/
+.cache/
+*.log
+dbt_packages/
+
+# Data files (can be regenerated)
+data/raw/
+*.csv
+
+# Temporary files
+temp/
+tmp/
+.pytest_cache/
