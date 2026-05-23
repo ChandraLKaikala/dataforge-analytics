@@ -130,12 +130,48 @@ try:
             conn.execute("INSERT INTO raw.web_events SELECT * FROM events_df")
             total_events += len(events_list)
 
+        # UPSERT: Update existing orders to simulate status changes
+        # Convert some Pending orders to Completed (realistic fulfillment)
+        upsert_count = np.random.randint(5, 15)
+        try:
+            conn.execute(f"""
+                UPDATE raw.orders
+                SET status = 'Completed', order_date = order_date
+                WHERE order_id IN (
+                    SELECT order_id FROM raw.orders
+                    WHERE status = 'Pending'
+                    ORDER BY RANDOM()
+                    LIMIT {upsert_count}
+                )
+            """)
+        except:
+            pass
+
+        # DELETE: Remove some old Cancelled orders (simulate order cleanup/cancellation)
+        delete_count = np.random.randint(2, 8)
+        try:
+            conn.execute(f"""
+                DELETE FROM raw.orders
+                WHERE status = 'Cancelled'
+                AND order_id IN (
+                    SELECT order_id FROM raw.orders
+                    WHERE status = 'Cancelled'
+                    ORDER BY order_date ASC
+                    LIMIT {delete_count}
+                )
+            """)
+            # Also delete associated items
+            conn.execute("DELETE FROM raw.order_items WHERE order_id NOT IN (SELECT order_id FROM raw.orders)")
+        except:
+            pass
+
         conn.close()
 
         cycle_time = time.time() - cycle_start
 
         print(f"DONE ({cycle_time:.2f}s)")
-        print(f"  Orders: {num_orders:>3} | Items: {len(items_list):>4} | Events: {num_events:>3}")
+        print(f"  INSERT - Orders: {num_orders:>3} | Items: {len(items_list):>4} | Events: {num_events:>3}")
+        print(f"  UPDATE - Status changes: {upsert_count:>3} orders | DELETE - Cancelled: {delete_count:>3} orders")
         print(f"  Totals - Orders: {total_orders:>8,} | Items: {total_items:>8,} | Events: {total_events:>8,}")
         print()
 
