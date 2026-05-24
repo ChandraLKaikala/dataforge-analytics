@@ -11,8 +11,7 @@ import os
 st.set_page_config(
     page_title="DataForge Analytics",
     layout="wide",
-    initial_sidebar_state="expanded",
-    theme="dark"
+    initial_sidebar_state="expanded"
 )
 
 # Custom CSS for professional look
@@ -180,16 +179,21 @@ elif st.session_state.current_page == "Customer 360":
     with col2:
         st.subheader("Customer Value Distribution")
         cust_spend = query("""
+            WITH customer_totals AS (
+                SELECT customer_id, SUM(total_amount) as total_spent
+                FROM raw.orders
+                WHERE status = 'Completed'
+                GROUP BY customer_id
+            )
             SELECT
                 CASE
-                    WHEN SUM(total_amount) > 10000 THEN 'VIP (>$10k)'
-                    WHEN SUM(total_amount) > 5000 THEN 'Gold ($5k-10k)'
-                    WHEN SUM(total_amount) > 1000 THEN 'Silver ($1k-5k)'
+                    WHEN total_spent > 10000 THEN 'VIP (>$10k)'
+                    WHEN total_spent > 5000 THEN 'Gold ($5k-10k)'
+                    WHEN total_spent > 1000 THEN 'Silver ($1k-5k)'
                     ELSE 'Standard (<$1k)'
                 END as segment,
                 COUNT(*) as count
-            FROM raw.orders
-            WHERE status = 'Completed'
+            FROM customer_totals
             GROUP BY segment
         """)
         if not cust_spend.empty:

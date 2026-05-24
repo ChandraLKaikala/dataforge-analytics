@@ -1,25 +1,14 @@
 # 🚀 HOW TO RUN DataForge Analytics Dashboard
 
-## Quick Start (3 Steps)
+## Single Command to Run
 
-### Step 1: Open Command Prompt / PowerShell
-```
-Windows Key + R
-Type: powershell
-Press: Enter
-```
+Open PowerShell in the project directory and run:
 
-### Step 2: Navigate to Project
 ```powershell
-cd C:\Users\lokes\Downloads\DBT_Project
+python -m streamlit run dashboard/app_professional.py --server.port 8502
 ```
 
-### Step 3: Start Dashboard
-```powershell
-python -m streamlit run dashboard/app.py
-```
-
-**That's it!** Dashboard opens automatically at: **http://localhost:8501**
+**That's it!** Dashboard will open at: **http://localhost:8502**
 
 ---
 
