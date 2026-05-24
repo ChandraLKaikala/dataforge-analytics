@@ -41,3 +41,10 @@ data/raw/
 temp/
 tmp/
 .pytest_cache/
+
+# Presentation and documentation files (keep locally, don't push to GitHub)
+PRESENTATION.md
+FINAL_SUMMARY.md
+VERIFICATION_REPORT.md
+GITHUB_FINAL_STATUS.txt
+QUICK_START.md
